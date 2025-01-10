@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Exploration</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #1a1a2e;
+            --secondary-color: #16213e;
+            --accent-color: #3498db;
+            --text-color: #e1e1e1;
+            --section-bg: rgba(26, 26, 46, 0.95);
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0a192f 0%, #121212 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: 
+                radial-gradient(1px 1px at 20px 30px, white, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 40px 70px, white, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 50px 160px, white, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, white, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 130px 80px, white, rgba(0,0,0,0));
+            background-repeat: repeat;
+            animation: stars 15s linear infinite;
+        }
+
+        @keyframes stars {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100px); }
+        }
+
+        .page-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-color);
+            font-size: 3em;
+            margin-bottom: 40px;
+            text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
+            to { text-shadow: 0 0 20px rgba(52, 152, 219, 0.8); }
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .box {
+            background: var(--section-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .text-box {
+            grid-row: span 2;
+        }
+
+        .image-box img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .stats-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 8px;
+        }
+
+        .links-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .links-list li {
+            margin-bottom: 15px;
+        }
+
+        .links-list a {
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .links-list a:hover {
+            background: rgba(52, 152, 219, 0.2);
+            transform: translateX(10px);
+        }
+
+        .scroll-text {
+            text-align: center;
+            color: var(--accent-color);
+            font-style: italic;
+            margin-top: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .mission-countdown {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+
+        .interactive-section {
+            grid-column: span 2;
+            text-align: center;
+        }
+
+        .planet-viewer {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .planet-card {
+            background: rgba(26, 26, 46, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .planet-card:hover {
+            transform: scale(1.05);
+        }
+
+        #missionChart {
+            margin-top: 20px;
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .text-box {
+                grid-row: auto;
+            }
+            .interactive-section {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="page-wrapper">
+        <h1>Journey Through the Cosmos</h1>
+        
+        <div class="container">
+            <div class="box text-box">
+                <h2>The Wonder of Space Exploration</h2>
+                <p>Space exploration represents humanity's eternal quest to understand our place in the vast cosmic arena. From the first telescopic observations of celestial bodies to modern-day missions to Mars, we continue to push the boundaries of human knowledge and technological achievement.</p>
+                
+                <div class="stats-container">
+                    <h3>Space Exploration Statistics</h3>
+                    <canvas id="missionChart"></canvas>
+                </div>
+
+                <div class="mission-countdown">
+                    <h3>Next Space Launch</h3>
+                    <div id="countdown">Loading...</div>
+                </div>
+            </div>
+
+            <div class="box image-box">
+                <img src="/api/placeholder/600/400" alt="Space Exploration Image">
+                <h3>Current Missions</h3>
+                <p>Exploring the frontiers of space through cutting-edge technology and human ingenuity.</p>
+            </div>
+
+            <div class="box links-box">
+                <h3>Explore More</h3>
+                <ul class="links-list">
+                    <li><a href="#" id="solar-system-link">Solar System Interactive Guide</a></li>
+                    <li><a href="#" id="missions-link">Latest Space Missions</a></li>
+                    <li><a href="#" id="tech-link">Space Technology Innovations</a></li>
+                    <li><a href="#" id="news-link">Breaking Astronomy News</a></li>
+                </ul>
+            </div>
+
+            <div class="box interactive-section">
+                <h2>Interactive Planet Explorer</h2>
+                <div class="planet-viewer">
+                    <div class="planet-card" id="mars">
+                        <h3>Mars</h3>
+                        <p>The Red Planet</p>
+                    </div>
+                    <div class="planet-card" id="jupiter">
+                        <h3>Jupiter</h3>
+                        <p>The Gas Giant</p>
+                    </div>
+                    <div class="planet-card" id="saturn">
+                        <h3>Saturn</h3>
+                        <p>The Ringed Planet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="scroll-text">Scroll down for more cosmic discoveries</p>
+    </div>
+
+    <script>
+        // Initialize mission statistics chart
+        const ctx = document.getElementById('missionChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['2020', '2021', '2022', '2023', '2024'],
+                datasets: [{
+                    label: 'Space Missions per Year',
+                    data: [25, 32, 38, 45, 52],
+                    backgroundColor: 'rgba(52, 152, 219, 0.5)',
+                    borderColor: 'rgba(52, 152, 219, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#e1e1e1'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#e1e1e1'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#e1e1e1'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Countdown timer
+        function updateCountdown() {
+            const launch = new Date('2025-02-15T10:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = launch - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+            document.getElementById('countdown').innerHTML = `${days}d ${hours}h ${minutes}m`;
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 60000);
+
+        // Interactive elements
+        document.querySelectorAll('.planet-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.style.transform = 'scale(1.1)';
+                setTimeout(() => card.style.transform = 'scale(1)', 200);
+            });
+        });
+
+        document.querySelectorAll('.links-list a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                link.style.backgroundColor = 'rgba(52, 152, 219, 0.3)';
+                setTimeout(() => link.style.backgroundColor = 'rgba(52, 152, 219, 0.1)', 200);
+            });
+        });
+    </script>
+</body>
+</html>
